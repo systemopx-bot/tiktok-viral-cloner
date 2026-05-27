@@ -90,8 +90,11 @@
   <div class="max-w-7xl mx-auto px-4">
     <div class="flex items-center justify-between">
       <div>
-        <h1 class="text-4xl font-bold">🎬 TikTok Viral Cloner</h1>
-        <p class="text-blue-100 mt-2">Analiza videos virales y genera versiones con tus productos - 100% GRATIS</p>
+        <div class="flex items-center gap-3">
+          <h1 class="text-4xl font-bold">🎬 TikTok Viral Cloner</h1>
+          <span class="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full">AGENCIA PARTNER ✓</span>
+        </div>
+        <p class="text-blue-100 mt-2">Analiza videos virales y genera versiones con tus productos - 100% GRATIS | Todas las categorías permitidas</p>
       </div>
       <div class="text-right">
         <div id="statusIndicator" class="flex items-center gap-2 text-sm">
@@ -135,16 +138,24 @@
       </div>
       
       <div class="space-y-4">
+        <!-- File input para video -->
+        <input type="file" id="videoFileInput" accept="video/*" style="display: none;">
+        
+        <!-- Drag & drop zone para video -->
         <div class="bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 p-8 text-center cursor-pointer hover:bg-gray-100 transition drop-zone" id="videoDropZone">
           <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
-          <p class="text-gray-700 font-semibold">Arrastra video aquí o pega URL</p>
-          <p class="text-gray-500 text-sm mt-2">TikTok, YouTube, o cualquier URL de video</p>
+          <p class="text-gray-700 font-semibold">Arrastra video aquí</p>
+          <p class="text-gray-500 text-sm mt-2">MP4, WebM, o cualquier formato de video</p>
         </div>
         
-        <input type="text" id="videoUrl" placeholder="https://www.tiktok.com/video/..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <!-- O input de URL como alternativa -->
+        <div class="relative">
+          <input type="text" id="videoUrl" placeholder="O pega URL de TikTok/YouTube..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <small class="text-gray-500 text-xs mt-1 block">Alternativa: si tienes URL, puedes usarla aquí</small>
+        </div>
         
         <div id="videoInfo" class="hidden p-4 bg-blue-50 rounded-lg border border-blue-200">
-          <p class="text-sm text-gray-700"><strong>URL cargado:</strong> <span id="videoUrlDisplay" class="text-blue-600 break-all"></span></p>
+          <p class="text-sm text-gray-700"><strong>Video cargado:</strong> <span id="videoInfoText" class="text-blue-600"></span></p>
         </div>
       </div>
     </div>
@@ -160,14 +171,18 @@
         <!-- Product Image Upload -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Imagen del Producto</label>
+          <input type="file" id="imageFileInput" accept="image/*" style="display: none;">
+          
           <div class="bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 p-8 text-center cursor-pointer hover:bg-gray-100 transition drop-zone" id="imageDropZone">
             <i class="fas fa-image text-4xl text-gray-400 mb-3"></i>
-            <p class="text-gray-700 font-semibold">Arrastra imagen o pega URL</p>
+            <p class="text-gray-700 font-semibold">Arrastra imagen aquí</p>
             <p class="text-gray-500 text-sm mt-2">PNG, JPG, WebP</p>
-            <input type="file" id="imageFileInput" accept="image/*" style="display: none;">
           </div>
           <img id="imagePreview" class="image-preview" style="display: none;">
-          <input type="text" id="productImage" placeholder="https://..." class="w-full mt-3 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+          
+          <!-- Alternativa URL -->
+          <input type="text" id="productImage" placeholder="O pega URL de imagen..." class="w-full mt-3 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+          <small class="text-gray-500 text-xs mt-1 block">Alternativa: si tienes URL de imagen</small>
         </div>
 
         <!-- Product Info -->
@@ -411,6 +426,7 @@
   let currentAnalysis = null;
   let categoriesData = null;
   let productImageBase64 = null;
+  let videoFile = null;
 
   // ============ LOAD CATEGORIES ============
   async function loadCategories() {
@@ -457,12 +473,8 @@
 
     const category = categoriesData.categories[key];
     
-    if (category.status === 'restringido') {
-      categoryWarning.innerHTML = `<i class="fas fa-lock"></i> <strong>Restringida:</strong> ${category.restriction_note}`;
-      categoryWarning.classList.remove('hidden');
-    } else {
-      categoryWarning.classList.add('hidden');
-    }
+    // Como es agencia partner, no mostramos advertencias
+    categoryWarning.classList.add('hidden');
 
     subcategorySelect.disabled = false;
     subcategorySelect.innerHTML = '<option value="">Selecciona subcategoría...</option>';
@@ -527,15 +539,11 @@
 
   // ============ FILE UPLOAD - VIDEO ============
   const videoDropZone = document.getElementById('videoDropZone');
+  const videoFileInput = document.getElementById('videoFileInput');
   const videoUrlInput = document.getElementById('videoUrl');
+  let videoFile = null;
 
-  videoDropZone.addEventListener('click', () => {
-    const url = prompt('Pega la URL del video viral (TikTok, YouTube, etc.):');
-    if (url) {
-      videoUrlInput.value = url;
-      videoUrlInput.dispatchEvent(new Event('change'));
-    }
-  });
+  videoDropZone.addEventListener('click', () => videoFileInput.click());
 
   videoDropZone.addEventListener('dragover', (e) => {
     e.preventDefault();
@@ -550,18 +558,34 @@
     e.preventDefault();
     videoDropZone.classList.remove('dragover');
     
-    // Si se arrastra URL
-    const url = e.dataTransfer.getData('text/plain');
-    if (url) {
-      videoUrlInput.value = url;
-      videoUrlInput.dispatchEvent(new Event('change'));
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      handleVideoFile(files[0]);
     }
   });
 
+  videoFileInput.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+      handleVideoFile(e.target.files[0]);
+    }
+  });
+
+  function handleVideoFile(file) {
+    if (!file.type.startsWith('video/')) {
+      showError('Por favor sube un video válido (MP4, WebM, etc.)');
+      return;
+    }
+
+    videoFile = file;
+    document.getElementById('videoInfoText').textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+    document.getElementById('videoInfo').classList.remove('hidden');
+    showSuccess(`✅ Video cargado: ${file.name}`);
+  }
+
   videoUrlInput.addEventListener('change', (e) => {
     const url = e.target.value;
-    if (url) {
-      document.getElementById('videoUrlDisplay').textContent = url;
+    if (url && !videoFile) {
+      document.getElementById('videoInfoText').textContent = url;
       document.getElementById('videoInfo').classList.remove('hidden');
     }
   });
@@ -581,82 +605,105 @@
 
   // ============ ANALYZE VIDEO ============
   document.getElementById('analyzeBtn').addEventListener('click', async () => {
+    const videoFileInput = document.getElementById('videoFileInput');
     const videoUrl = document.getElementById('videoUrl').value;
     const productInfo = document.getElementById('productInfo').value;
     const category = document.getElementById('productCategory').value;
     const subcategory = document.getElementById('productSubcategory').value;
 
-    if (!videoUrl) {
-      showError('Por favor ingresa la URL del video viral');
+    // Determinar fuente de video
+    let videoSource = null;
+    if (videoFile) {
+      // Si hay archivo local, convertir a base64
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        videoSource = e.target.result;
+        performAnalysis(videoSource, productInfo, category, subcategory, true);
+      };
+      reader.readAsDataURL(videoFile);
+      return;
+    } else if (videoUrl) {
+      videoSource = videoUrl;
+      performAnalysis(videoSource, productInfo, category, subcategory, false);
+    } else {
+      showError('Por favor carga o pega la URL del video viral');
       return;
     }
 
-    if (!productInfo) {
-      showError('Por favor describe tu producto');
-      return;
-    }
+    async function performAnalysis(source, prodInfo, cat, subcat, isFile) {
+      if (!prodInfo) {
+        showError('Por favor describe tu producto');
+        return;
+      }
 
-    if (!category) {
-      showError('Por favor selecciona una categoría');
-      return;
-    }
+      if (!cat) {
+        showError('Por favor selecciona una categoría');
+        return;
+      }
 
-    if (!subcategory) {
-      showError('Por favor selecciona una subcategoría');
-      return;
-    }
+      if (!subcat) {
+        showError('Por favor selecciona una subcategoría');
+        return;
+      }
 
-    document.getElementById('analysisLoading').classList.remove('hidden');
-    document.getElementById('analysisResult').classList.add('hidden');
+      document.getElementById('analysisLoading').classList.remove('hidden');
+      document.getElementById('analysisResult').classList.add('hidden');
 
-    try {
-      const fullProductInfo = `${productInfo} (Categoría: ${categoriesData.categories[category].label} / Subcategoría: ${subcategory})`;
-      
-      const response = await fetch(`${API_BASE}/analyze`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ videoUrl, productInfo: fullProductInfo })
-      });
+      try {
+        const fullProductInfo = `${prodInfo} (Categoría: ${categoriesData.categories[cat].label} / Subcategoría: ${subcat})`;
+        
+        // Si es archivo, el backend debe procesarlo
+        const payload = isFile 
+          ? { videoFile: source, productInfo: fullProductInfo }
+          : { videoUrl: source, productInfo: fullProductInfo };
 
-      if (!response.ok) throw new Error('Error en análisis');
+        const response = await fetch(`${API_BASE}/analyze`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
 
-      const data = await response.json();
-      currentAnalysis = data.analysis;
+        if (!response.ok) throw new Error('Error en análisis');
 
-      document.getElementById('analysisStructure').innerHTML = `
-        <p><strong>Hook:</strong> ${data.analysis.viralStructure?.hook || 'N/A'}</p>
-        <p><strong>Duración:</strong> ${data.analysis.viralStructure?.duration || 'N/A'}</p>
-        <p><strong>Ritmo:</strong> ${data.analysis.viralStructure?.rhythm || 'N/A'}</p>
-      `;
+        const data = await response.json();
+        currentAnalysis = data.analysis;
 
-      document.getElementById('analysisElements').innerHTML = `
-        <p><strong>Cámara:</strong> ${data.analysis.keyElements?.camera || 'N/A'}</p>
-        <p><strong>Iluminación:</strong> ${data.analysis.keyElements?.lighting || 'N/A'}</p>
-        <p><strong>Audio:</strong> ${data.analysis.keyElements?.audio || 'N/A'}</p>
-      `;
+        document.getElementById('analysisStructure').innerHTML = `
+          <p><strong>Hook:</strong> ${data.analysis.viralStructure?.hook || 'N/A'}</p>
+          <p><strong>Duración:</strong> ${data.analysis.viralStructure?.duration || 'N/A'}</p>
+          <p><strong>Ritmo:</strong> ${data.analysis.viralStructure?.rhythm || 'N/A'}</p>
+        `;
 
-      const promptText = data.analysis.adaptedPrompt;
-      document.getElementById('generatedPrompt').textContent = promptText;
+        document.getElementById('analysisElements').innerHTML = `
+          <p><strong>Cámara:</strong> ${data.analysis.keyElements?.camera || 'N/A'}</p>
+          <p><strong>Iluminación:</strong> ${data.analysis.keyElements?.lighting || 'N/A'}</p>
+          <p><strong>Audio:</strong> ${data.analysis.keyElements?.audio || 'N/A'}</p>
+        `;
 
-      // Mostrar settings en resultados
-      document.getElementById('resultResolution').textContent = document.getElementById('resolution').value;
-      document.getElementById('resultRatio').textContent = document.getElementById('aspectRatio').value;
-      document.getElementById('resultDuration').textContent = document.getElementById('duration').value + ' segundos';
+        const promptText = data.analysis.adaptedPrompt;
+        document.getElementById('generatedPrompt').textContent = promptText;
 
-      document.getElementById('analysisResult').classList.remove('hidden');
-      document.getElementById('resultsSection').classList.remove('hidden');
+        // Mostrar settings en resultados
+        document.getElementById('resultResolution').textContent = document.getElementById('resolution').value;
+        document.getElementById('resultRatio').textContent = document.getElementById('aspectRatio').value;
+        document.getElementById('resultDuration').textContent = document.getElementById('duration').value + ' segundos';
 
-      showSuccess('✅ Análisis completado. Prompt generado - cópialo a HappyHorse o veoaifree');
-    } catch (error) {
-      showError('Error analizando video: ' + error.message);
-    } finally {
-      document.getElementById('analysisLoading').classList.add('hidden');
+        document.getElementById('analysisResult').classList.remove('hidden');
+        document.getElementById('resultsSection').classList.remove('hidden');
+
+        showSuccess('✅ Análisis completado. Prompt generado - cópialo a HappyHorse o veoaifree');
+      } catch (error) {
+        showError('Error analizando video: ' + error.message);
+      } finally {
+        document.getElementById('analysisLoading').classList.add('hidden');
+      }
     }
   });
 
   // ============ RESET ============
   document.getElementById('resetBtn').addEventListener('click', () => {
     document.getElementById('videoUrl').value = '';
+    document.getElementById('videoFileInput').value = '';
     document.getElementById('productInfo').value = '';
     document.getElementById('productImage').value = '';
     document.getElementById('productCategory').value = '';
@@ -667,6 +714,7 @@
     document.getElementById('categoryWarning').classList.add('hidden');
     imagePreview.style.display = 'none';
     productImageBase64 = null;
+    videoFile = null;
     currentAnalysis = null;
   });
 

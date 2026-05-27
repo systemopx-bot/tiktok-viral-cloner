@@ -1,8 +1,9 @@
 {
+  "agencyMode": true,
+  "note": "Modo Agencia Partner - TODAS las categorías permitidas sin restricciones",
   "categories": {
     "ropa_moda": {
       "label": "Ropa & Moda",
-      "status": "permitido",
       "subcategories": [
         "Ropa para hombre",
         "Ropa para mujer",
@@ -16,7 +17,6 @@
     },
     "zapatos": {
       "label": "Zapatos & Calzado",
-      "status": "permitido",
       "subcategories": [
         "Zapatos para hombre",
         "Zapatos para mujer",
@@ -30,7 +30,6 @@
     },
     "accesorios_moda": {
       "label": "Accesorios de Moda",
-      "status": "permitido",
       "subcategories": [
         "Bolsas & mochilas",
         "Billeteras & carteras",
@@ -44,7 +43,6 @@
     },
     "electronica": {
       "label": "Electrónica & Gadgets",
-      "status": "permitido",
       "subcategories": [
         "Accesorios de celular",
         "Auriculares & audífonos",
@@ -59,7 +57,6 @@
     },
     "electrodomesticos": {
       "label": "Electrodomésticos",
-      "status": "permitido",
       "subcategories": [
         "Pequeños electrodomésticos",
         "Ventiladores",
@@ -73,7 +70,6 @@
     },
     "hogar_decoracion": {
       "label": "Hogar & Decoración",
-      "status": "permitido",
       "subcategories": [
         "Decoración de pared",
         "Cuadros & láminas",
@@ -89,7 +85,6 @@
     },
     "muebles": {
       "label": "Muebles",
-      "status": "permitido",
       "subcategories": [
         "Sofás & sillas",
         "Mesas & escritorios",
@@ -102,7 +97,6 @@
     },
     "cocina": {
       "label": "Cocina & Comedor",
-      "status": "permitido",
       "subcategories": [
         "Utensilios de cocina",
         "Ollas & sartenes",
@@ -118,7 +112,6 @@
     },
     "libros": {
       "label": "Libros & Educación",
-      "status": "permitido",
       "subcategories": [
         "Novelas",
         "Libros de desarrollo personal",
@@ -131,10 +124,8 @@
         "Bolígrafos & lápices"
       ]
     },
-    "belleza_cuidado": {
-      "label": "🔒 Belleza & Cuidado Personal (RESTRINGIDO)",
-      "status": "restringido",
-      "restriction_note": "Requiere registro COFEPRIS + GMV ≥ $1M USD en 2024",
+    "belleza": {
+      "label": "Belleza & Skincare (Agencia Partner ✓)",
       "subcategories": [
         "Skincare (cremas, sueros, mascarillas)",
         "Maquillaje",
@@ -143,34 +134,70 @@
         "Herramientas de belleza",
         "Cuidado corporal",
         "Higiene personal",
-        "Protección solar"
+        "Protección solar",
+        "Tratamientos especializados"
       ]
     },
     "autopartes": {
-      "label": "🔒 Autopartes (RESTRINGIDO)",
-      "status": "restringido",
-      "restriction_note": "Requiere GMV ≥ $100K USD en 2024",
+      "label": "Autopartes (Agencia Partner ✓)",
       "subcategories": [
         "Accesorios de coche",
         "Repuestos",
         "Limpieza automotriz",
-        "Herramientas automotrices"
+        "Herramientas automotrices",
+        "Accesorios interiores",
+        "Protección exterior"
       ]
     },
     "suplementos": {
-      "label": "⚠️ Suplementos & Dispositivos Médicos (RESTRINGIDO)",
-      "status": "restringido",
-      "restriction_note": "Requiere autorización previa de TikTok",
+      "label": "Suplementos & Nutrición (Agencia Partner ✓)",
       "subcategories": [
         "Suplementos vitamínicos",
         "Proteínas & nutrición deportiva",
         "Probióticos",
+        "Minerales & electrolitos",
+        "Omega-3 & ácidos grasos",
         "Dispositivos de salud"
       ]
     },
+    "bebes_juguetes": {
+      "label": "Bebés & Juguetes (Agencia Partner ✓)",
+      "subcategories": [
+        "Juguetes educativos",
+        "Juguetes para bebés",
+        "Juguetes para niños",
+        "Artículos para bebés",
+        "Carreolas & sillas",
+        "Ropa de bebé"
+      ]
+    },
+    "mascotas": {
+      "label": "Productos para Mascotas (Agencia Partner ✓)",
+      "subcategories": [
+        "Alimento para perros",
+        "Alimento para gatos",
+        "Juguetes para mascotas",
+        "Accesorios para perros",
+        "Accesorios para gatos",
+        "Camas & casitas",
+        "Cuidado de mascotas",
+        "Arneses & correas"
+      ]
+    },
+    "joyeria": {
+      "label": "Joyería & Accesorios (Agencia Partner ✓)",
+      "subcategories": [
+        "Anillos",
+        "Collares & colgantes",
+        "Pulseras & brazaletes",
+        "Aretes",
+        "Relojes",
+        "Joyería de fantasía",
+        "Accesorios de lujo"
+      ]
+    },
     "otros": {
-      "label": "Otros Productos Permitidos",
-      "status": "permitido",
+      "label": "Otros Productos",
       "subcategories": [
         "Herramientas & tornillería",
         "Artículos de oficina",
@@ -178,29 +205,10 @@
         "Artículos de viaje",
         "Artesanías",
         "Equipos deportivos",
-        "Accesorios deportivos"
+        "Accesorios deportivos",
+        "Plantas & jardinería",
+        "Equipos de camping"
       ]
     }
-  },
-  "prohibited_categories": {
-    "label": "🚫 Categorías PROHIBIDAS (NO permitidas)",
-    "note": "No es posible vender estos productos en TikTok Shop México",
-    "items": [
-      "Artículos para bebés y juguetes",
-      "Alimentos y bebidas",
-      "Productos para mascotas",
-      "Joyería y metales preciosos",
-      "Suministros médicos generales",
-      "Productos para adultos (juguetes sexuales, ropa erótica)",
-      "Cigarrillos electrónicos & vaping",
-      "Teléfonos de segunda mano",
-      "Alcohol y tabaco",
-      "Armas y artículos con cuchillas",
-      "Partes del cuerpo humano / fluidos",
-      "Artículos gubernamentales / militares",
-      "Fauna y flora protegidas / plantas vivas",
-      "Diamantes en bruto",
-      "Productos discriminatorios u ofensivos"
-    ]
   }
 }
