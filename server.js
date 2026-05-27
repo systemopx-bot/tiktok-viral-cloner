@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import multer from 'multer';
 import { analyzeVideoWithGroq } from './src/api/groq-analyzer.js';
-import { generateWithSeedance } from './src/api/seedance.js';
+import { generateVideoWithCogVideoX, generateVideoWithDiffusers } from './src/video-generator.js';
 import fs from 'fs';
 
 dotenv.config();
@@ -61,29 +61,37 @@ app.post('/api/analyze', async (req, res) => {
 
 /**
  * POST /api/generate
- * Genera video con Seedance 2.0
- * Body: { prompt: string, productImage?: string, aspectRatio?: string }
+ * ✨ NUEVO: Genera video CON COGVIDEOX (open-source, 100% GRATIS, SIN API KEYS)
+ * Descarga el video automáticamente
  */
 app.post('/api/generate', async (req, res) => {
   try {
-    const { prompt, productImage, aspectRatio = '9:16' } = req.body;
+    const { prompt, duration = 5, resolution = '1080p', aspectRatio = '9:16' } = req.body;
 
     if (!prompt) {
       return res.status(400).json({ error: 'prompt requerida' });
     }
 
-    console.log('🎥 Generando video con Seedance...');
+    console.log('🎥 Generando video con CogVideoX (open-source)...');
+    console.log(`📝 Prompt: ${prompt.substring(0, 100)}...`);
 
-    // Generar con fal.ai Seedance
-    const videoResult = await generateWithSeedance({
-      prompt,
-      productImage,
-      aspectRatio
+    // Generar con CogVideoX (completamente LOCAL, sin APIs)
+    const videoResult = await generateVideoWithCogVideoX(prompt, {
+      duration,
+      resolution,
+      aspectRatio,
+      outputPath: join(__dirname, 'public/outputs')
     });
 
     res.json({
       success: true,
-      video: videoResult,
+      message: '✅ Video generado con CogVideoX',
+      video: {
+        url: videoResult.videoUrl,
+        path: videoResult.videoPath,
+        size: fs.statSync(videoResult.videoPath).size,
+        downloadUrl: `${req.protocol}://${req.get('host')}${videoResult.videoUrl}`
+      },
       timestamp: new Date().toISOString()
     });
   } catch (error) {
@@ -94,36 +102,51 @@ app.post('/api/generate', async (req, res) => {
 
 /**
  * POST /api/analyze-and-generate
- * Pipeline completo: analiza video viral + genera versión con producto
+ * 🚀 Pipeline COMPLETO: analiza video viral + genera versión con producto
+ * ✨ AHORA CON COGVIDEOX ABIERTO - Descarga automática del video generado
  */
 app.post('/api/analyze-and-generate', async (req, res) => {
   try {
-    const { videoUrl, productInfo, productImage } = req.body;
+    const { videoUrl, productInfo, prompt, duration = 5, resolution = '1080p' } = req.body;
 
-    if (!videoUrl || !productInfo) {
+    if (!videoUrl && !prompt) {
       return res.status(400).json({ 
-        error: 'videoUrl y productInfo requeridas' 
+        error: 'Se requiere videoUrl (para analizar) o prompt (para generar)' 
       });
     }
 
     console.log('🚀 Pipeline completo iniciado...');
 
-    // Paso 1: Analizar
-    console.log('📊 Paso 1: Analizando video viral...');
-    const analysis = await analyzeVideoWithGroq(videoUrl, productInfo);
+    let finalPrompt = prompt;
 
-    // Paso 2: Generar
-    console.log('🎬 Paso 2: Generando video con tu producto...');
-    const videoResult = await generateWithSeedance({
-      prompt: analysis.adaptedPrompt,
-      productImage,
-      aspectRatio: analysis.recommendedAspectRatio || '9:16'
+    // Paso 1: Analizar (si se proporciona videoUrl)
+    if (videoUrl && productInfo) {
+      console.log('📊 Paso 1: Analizando video viral con Groq...');
+      const analysis = await analyzeVideoWithGroq(videoUrl, productInfo);
+      finalPrompt = analysis.adaptedPrompt;
+      console.log('✅ Análisis completado');
+    }
+
+    // Paso 2: Generar video
+    console.log('🎬 Paso 2: Generando video con CogVideoX...');
+    const videoResult = await generateVideoWithCogVideoX(finalPrompt, {
+      duration,
+      resolution,
+      aspectRatio: '9:16',
+      outputPath: join(__dirname, 'public/outputs')
     });
+
+    console.log('✅ Video generado exitosamente');
 
     res.json({
       success: true,
-      analysis,
-      video: videoResult,
+      message: '✅ Pipeline completado - Video generado con CogVideoX',
+      video: {
+        url: videoResult.videoUrl,
+        downloadUrl: `${req.protocol}://${req.get('host')}${videoResult.videoUrl}`,
+        size: fs.statSync(videoResult.videoPath).size,
+        prompt: finalPrompt
+      },
       timestamp: new Date().toISOString()
     });
   } catch (error) {
@@ -139,9 +162,12 @@ app.post('/api/analyze-and-generate', async (req, res) => {
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
+    message: '✅ Sistema activo con CogVideoX (open-source, 100% GRATIS)',
+    videoGenerator: 'CogVideoX (THUDM/CogVideo - GitHub)',
+    analyzer: 'Groq LLM',
+    noApiCosts: true,
     timestamp: new Date().toISOString(),
-    groqApiKey: process.env.GROQ_API_KEY ? '✓' : '✗',
-    falApiKey: process.env.FAL_API_KEY ? '✓' : '✗'
+    groqApiKey: process.env.GROQ_API_KEY ? '✓' : '✗'
   });
 });
 
