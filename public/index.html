@@ -59,16 +59,27 @@
       background-color: #f0f0f0;
     }
 
-    .category-restricted {
-      color: #f59e0b;
-      background-color: #fef3c7;
+    .drop-zone {
+      transition: all 0.3s ease;
+      border: 2px dashed #d1d5db;
     }
 
-    .category-prohibited {
-      color: #dc2626;
-      background-color: #fee2e2;
-      cursor: not-allowed;
-      opacity: 0.6;
+    .drop-zone.dragover {
+      background-color: #ede9fe;
+      border-color: #667eea;
+    }
+
+    .image-preview {
+      max-width: 150px;
+      max-height: 150px;
+      border-radius: 8px;
+      margin-top: 8px;
+    }
+
+    .video-preview {
+      max-width: 100%;
+      border-radius: 8px;
+      margin-top: 12px;
     }
   </style>
 </head>
@@ -123,15 +134,18 @@
         <h2 class="text-2xl font-bold text-gray-800">Paso 1: Video Viral</h2>
       </div>
       
-      <div class="bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 p-8 text-center cursor-pointer hover:bg-gray-100 transition" id="videoDropZone">
-        <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
-        <p class="text-gray-700 font-semibold">Pega URL de TikTok o YouTube</p>
-        <p class="text-gray-500 text-sm mt-2">Ejemplo: https://www.tiktok.com/video/...</p>
-        <input type="text" id="videoUrl" placeholder="https://..." class="w-full mt-4 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-      </div>
-      
-      <div id="videoInfo" class="hidden mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-        <p class="text-sm text-gray-700"><strong>URL cargado:</strong> <span id="videoUrlDisplay" class="text-blue-600 break-all"></span></p>
+      <div class="space-y-4">
+        <div class="bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 p-8 text-center cursor-pointer hover:bg-gray-100 transition drop-zone" id="videoDropZone">
+          <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
+          <p class="text-gray-700 font-semibold">Arrastra video aquí o pega URL</p>
+          <p class="text-gray-500 text-sm mt-2">TikTok, YouTube, o cualquier URL de video</p>
+        </div>
+        
+        <input type="text" id="videoUrl" placeholder="https://www.tiktok.com/video/..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        
+        <div id="videoInfo" class="hidden p-4 bg-blue-50 rounded-lg border border-blue-200">
+          <p class="text-sm text-gray-700"><strong>URL cargado:</strong> <span id="videoUrlDisplay" class="text-blue-600 break-all"></span></p>
+        </div>
       </div>
     </div>
 
@@ -146,11 +160,14 @@
         <!-- Product Image Upload -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Imagen del Producto</label>
-          <div class="bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 p-8 text-center cursor-pointer hover:bg-gray-100 transition" id="imageDropZone">
+          <div class="bg-gray-50 rounded-lg border-2 border-dashed border-gray-300 p-8 text-center cursor-pointer hover:bg-gray-100 transition drop-zone" id="imageDropZone">
             <i class="fas fa-image text-4xl text-gray-400 mb-3"></i>
-            <p class="text-gray-700 font-semibold">O pega URL de imagen</p>
-            <input type="text" id="productImage" placeholder="https://..." class="w-full mt-3 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+            <p class="text-gray-700 font-semibold">Arrastra imagen o pega URL</p>
+            <p class="text-gray-500 text-sm mt-2">PNG, JPG, WebP</p>
+            <input type="file" id="imageFileInput" accept="image/*" style="display: none;">
           </div>
+          <img id="imagePreview" class="image-preview" style="display: none;">
+          <input type="text" id="productImage" placeholder="https://..." class="w-full mt-3 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
         </div>
 
         <!-- Product Info -->
@@ -183,18 +200,18 @@
 
   <!-- Categorías Info -->
   <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-8 text-sm text-blue-800">
-    <div class="flex gap-4">
+    <div class="grid md:grid-cols-3 gap-4">
       <div class="flex gap-2 items-start">
         <i class="fas fa-check-circle text-green-600 mt-0.5"></i>
         <span><strong>Permitidas:</strong> Venta directa sin restricciones</span>
       </div>
       <div class="flex gap-2 items-start">
         <i class="fas fa-lock text-yellow-600 mt-0.5"></i>
-        <span><strong>Restringidas:</strong> Requieren requisitos adicionales (COFEPRIS, GMV mínimo, etc.)</span>
+        <span><strong>Restringidas:</strong> Requieren requisitos adicionales</span>
       </div>
       <div class="flex gap-2 items-start">
         <i class="fas fa-ban text-red-600 mt-0.5"></i>
-        <span><strong>Prohibidas:</strong> NO permitidas en TikTok Shop México</span>
+        <span><strong>Prohibidas:</strong> NO permitidas en TikTok Shop</span>
       </div>
     </div>
   </div>
@@ -224,8 +241,9 @@
       </div>
       
       <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-        <h3 class="font-bold text-gray-800 mb-2">✨ Prompt Generado</h3>
-        <div id="generatedPrompt" class="bg-white p-3 rounded text-sm text-gray-700 font-mono max-h-32 overflow-y-auto"></div>
+        <h3 class="font-bold text-gray-800 mb-2">✨ Prompt Generado para Video IA</h3>
+        <div id="generatedPrompt" class="bg-white p-3 rounded text-sm text-gray-700 font-mono max-h-40 overflow-y-auto border border-gray-200"></div>
+        <p class="text-xs text-gray-600 mt-2">💡 Copia este prompt a HappyHorse 1.0 o veoaifree.com para generar el video</p>
       </div>
     </div>
 
@@ -240,11 +258,8 @@
     <div class="flex items-center justify-between mb-6">
       <div class="flex items-center gap-3">
         <i class="fas fa-magic text-2xl"></i>
-        <h2 class="text-2xl font-bold">Generar Video con IA</h2>
+        <h2 class="text-2xl font-bold">Generador de Prompts (Copia a HappyHorse/veoaifree)</h2>
       </div>
-      <button id="generateBtn" class="bg-white text-purple-600 px-6 py-2 rounded-lg font-bold hover:bg-gray-100 transition flex items-center gap-2" disabled>
-        <i class="fas fa-wand-magic-sparkles"></i> Generar
-      </button>
     </div>
 
     <div class="grid md:grid-cols-3 gap-4 mb-6">
@@ -252,7 +267,7 @@
         <label class="block text-sm font-medium mb-2">Resolución</label>
         <select id="resolution" class="w-full px-3 py-2 rounded bg-white text-gray-800">
           <option value="720p">720p</option>
-          <option value="1080p" selected>1080p</option>
+          <option value="1080p" selected>1080p (TikTok)</option>
           <option value="2k">2K</option>
         </select>
       </div>
@@ -266,14 +281,56 @@
       </div>
       <div>
         <label class="block text-sm font-medium mb-2">Duración (seg)</label>
-        <input type="number" id="duration" value="5" min="3" max="15" class="w-full px-3 py-2 rounded bg-white text-gray-800">
+        <input type="number" id="duration" value="8" min="3" max="15" class="w-full px-3 py-2 rounded bg-white text-gray-800">
       </div>
     </div>
 
-    <div id="generationLoading" class="hidden text-center py-8">
-      <i class="fas fa-spinner loading text-3xl mb-3"></i>
-      <p>Generando tu video con veoaifree / HappyHorse...</p>
-      <p class="text-sm text-purple-100 mt-2">Esto puede tomar 1-3 minutos</p>
+    <div class="bg-white text-purple-600 p-4 rounded-lg">
+      <div class="flex items-start gap-3">
+        <i class="fas fa-lightbulb mt-1"></i>
+        <div class="text-sm">
+          <p class="font-semibold mb-2">📌 Cómo usar:</p>
+          <ol class="list-decimal list-inside space-y-1">
+            <li>Analyza el video viral ⬆️</li>
+            <li>Se genera un prompt optimizado</li>
+            <li>Cópialo y pégalo en <strong>HappyHorse 1.0</strong> (app desktop) o <strong>veoaifree.com</strong></li>
+            <li>¡Listo! Tienes tu video generado sin costos</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Video Generators Info -->
+  <div class="grid md:grid-cols-2 gap-6 mb-8">
+    <div class="bg-green-50 border border-green-200 rounded-xl p-6">
+      <div class="flex items-center gap-3 mb-3">
+        <i class="fas fa-star text-2xl text-yellow-500"></i>
+        <h3 class="text-lg font-bold text-green-800">HappyHorse 1.0 (RECOMENDADO)</h3>
+      </div>
+      <ul class="text-sm text-green-700 space-y-2">
+        <li>✅ <strong>MEJOR CALIDAD</strong> - 1080p, sin watermark</li>
+        <li>✅ Gratis hasta 30 de junio 2026</li>
+        <li>✅ App desktop (Windows/Mac)</li>
+        <li>✅ Audio nativo incluido</li>
+        <li>✅ Derechos comerciales</li>
+        <li class="pt-2"><a href="https://github.com/HappyHorse-app/Happy-Horse-1.0/releases" target="_blank" class="underline font-semibold">📥 Descargar HappyHorse</a></li>
+      </ul>
+    </div>
+
+    <div class="bg-blue-50 border border-blue-200 rounded-xl p-6">
+      <div class="flex items-center gap-3 mb-3">
+        <i class="fas fa-globe text-2xl text-blue-600"></i>
+        <h3 class="text-lg font-bold text-blue-800">veoaifree.com (ALTERNATIVA)</h3>
+      </div>
+      <ul class="text-sm text-blue-700 space-y-2">
+        <li>✅ 100% GRATIS y en línea</li>
+        <li>✅ Seedance 2.0</li>
+        <li>✅ Sin login requerido</li>
+        <li>✅ Hasta 10 segundos</li>
+        <li>✅ Sin watermark</li>
+        <li class="pt-2"><a href="https://veoaifree.com" target="_blank" class="underline font-semibold">🔗 Ir a veoaifree.com</a></li>
+      </ul>
     </div>
   </div>
 
@@ -281,21 +338,41 @@
   <div id="resultsSection" class="hidden bg-white rounded-xl shadow-md p-8">
     <div class="flex items-center gap-3 mb-6">
       <i class="fas fa-check-circle text-2xl text-green-500"></i>
-      <h2 class="text-2xl font-bold text-gray-800">¡Video Generado!</h2>
+      <h2 class="text-2xl font-bold text-gray-800">¡Análisis Completado!</h2>
     </div>
 
     <div class="space-y-4">
-      <div id="generationInstructions" class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-        <h3 class="font-bold text-blue-800 mb-2">📝 Próximos pasos:</h3>
-        <p class="text-sm text-blue-700">Tu video está listo para descargar y publicar en TikTok Shop. Usa HappyHorse 1.0 o veoaifree.com para generar:</p>
-        <ul class="text-sm text-blue-700 mt-2 space-y-1">
-          <li>✅ HappyHorse 1.0 (app desktop) - MEJOR CALIDAD, gratis hasta junio 2026</li>
-          <li>✅ veoaifree.com - Seedance 2.0, 100% gratis, sin login</li>
-        </ul>
+      <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+        <h3 class="font-bold text-green-800 mb-2">✅ Próximos pasos:</h3>
+        <ol class="text-sm text-green-700 space-y-2 list-decimal list-inside">
+          <li>Copia el <strong>Prompt Generado</strong> de arriba</li>
+          <li>Abre <strong>HappyHorse 1.0</strong> o <strong>veoaifree.com</strong></li>
+          <li>Pega el prompt y especifica: Resolución, Ratio, Duración</li>
+          <li>¡Genera tu video!</li>
+          <li>Descárgalo y publica en TikTok Shop</li>
+        </ol>
       </div>
 
-      <button id="resetBtn" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2 rounded-lg font-medium">
-        Crear otro video
+      <div class="bg-gray-100 p-4 rounded-lg">
+        <p class="text-sm text-gray-700 mb-3"><strong>📋 Tu configuración:</strong></p>
+        <div class="grid md:grid-cols-3 gap-4 text-sm">
+          <div>
+            <p class="text-gray-600">Resolución</p>
+            <p id="resultResolution" class="font-bold text-gray-800">1080p</p>
+          </div>
+          <div>
+            <p class="text-gray-600">Ratio</p>
+            <p id="resultRatio" class="font-bold text-gray-800">9:16</p>
+          </div>
+          <div>
+            <p class="text-gray-600">Duración</p>
+            <p id="resultDuration" class="font-bold text-gray-800">8 segundos</p>
+          </div>
+        </div>
+      </div>
+
+      <button id="resetBtn" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-lg font-medium transition">
+        <i class="fas fa-redo"></i> Crear otro video
       </button>
     </div>
   </div>
@@ -323,8 +400,8 @@
 <!-- Footer -->
 <footer class="bg-gray-800 text-white py-8 mt-16">
   <div class="max-w-7xl mx-auto px-4 text-center">
-    <p class="mb-2">🎬 TikTok Viral Cloner | 100% GRATIS con Groq + HappyHorse/veoaifree</p>
-    <p class="text-gray-400 text-sm">Genera videos virales para TikTok Shop sin costos - Categorías Oficiales TikTok Shop México</p>
+    <p class="mb-2">🎬 TikTok Viral Cloner | 100% GRATIS (Groq + HappyHorse/veoaifree)</p>
+    <p class="text-gray-400 text-sm">Categorías Oficiales TikTok Shop México | Sistema escalable para producción en masa</p>
   </div>
 </footer>
 
@@ -333,6 +410,7 @@
   const API_BASE = window.location.origin + '/api';
   let currentAnalysis = null;
   let categoriesData = null;
+  let productImageBase64 = null;
 
   // ============ LOAD CATEGORIES ============
   async function loadCategories() {
@@ -356,8 +434,6 @@
       let label = cat.label;
       if (cat.status === 'restringido') {
         label += ' 🔒 (Restringido)';
-      } else if (cat.status === 'prohibido') {
-        label += ' 🚫 (Prohibido)';
       }
       
       option.textContent = label;
@@ -381,9 +457,8 @@
 
     const category = categoriesData.categories[key];
     
-    // Mostrar advertencias si aplica
     if (category.status === 'restringido') {
-      categoryWarning.innerHTML = `<i class="fas fa-lock"></i> <strong>Categoría Restringida:</strong> ${category.restriction_note}`;
+      categoryWarning.innerHTML = `<i class="fas fa-lock"></i> <strong>Restringida:</strong> ${category.restriction_note}`;
       categoryWarning.classList.remove('hidden');
     } else {
       categoryWarning.classList.add('hidden');
@@ -400,6 +475,97 @@
     });
   });
 
+  // ============ FILE UPLOAD - IMAGE ============
+  const imageDropZone = document.getElementById('imageDropZone');
+  const imageFileInput = document.getElementById('imageFileInput');
+  const imagePreview = document.getElementById('imagePreview');
+  const productImageInput = document.getElementById('productImage');
+
+  imageDropZone.addEventListener('click', () => imageFileInput.click());
+
+  imageDropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    imageDropZone.classList.add('dragover');
+  });
+
+  imageDropZone.addEventListener('dragleave', () => {
+    imageDropZone.classList.remove('dragover');
+  });
+
+  imageDropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    imageDropZone.classList.remove('dragover');
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      handleImageFile(files[0]);
+    }
+  });
+
+  imageFileInput.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+      handleImageFile(e.target.files[0]);
+    }
+  });
+
+  function handleImageFile(file) {
+    if (!file.type.startsWith('image/')) {
+      showError('Por favor sube una imagen válida');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      productImageBase64 = e.target.result;
+      imagePreview.src = productImageBase64;
+      imagePreview.style.display = 'block';
+      productImageInput.value = productImageBase64;
+      showSuccess('✅ Imagen cargada');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // ============ FILE UPLOAD - VIDEO ============
+  const videoDropZone = document.getElementById('videoDropZone');
+  const videoUrlInput = document.getElementById('videoUrl');
+
+  videoDropZone.addEventListener('click', () => {
+    const url = prompt('Pega la URL del video viral (TikTok, YouTube, etc.):');
+    if (url) {
+      videoUrlInput.value = url;
+      videoUrlInput.dispatchEvent(new Event('change'));
+    }
+  });
+
+  videoDropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    videoDropZone.classList.add('dragover');
+  });
+
+  videoDropZone.addEventListener('dragleave', () => {
+    videoDropZone.classList.remove('dragover');
+  });
+
+  videoDropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    videoDropZone.classList.remove('dragover');
+    
+    // Si se arrastra URL
+    const url = e.dataTransfer.getData('text/plain');
+    if (url) {
+      videoUrlInput.value = url;
+      videoUrlInput.dispatchEvent(new Event('change'));
+    }
+  });
+
+  videoUrlInput.addEventListener('change', (e) => {
+    const url = e.target.value;
+    if (url) {
+      document.getElementById('videoUrlDisplay').textContent = url;
+      document.getElementById('videoInfo').classList.remove('hidden');
+    }
+  });
+
   // ============ UTILITIES ============
   function showError(message) {
     document.getElementById('errorMessage').textContent = message;
@@ -412,15 +578,6 @@
     document.getElementById('successAlert').classList.remove('hidden');
     setTimeout(() => document.getElementById('successAlert').classList.add('hidden'), 5000);
   }
-
-  // ============ VIDEO URL INPUT ============
-  document.getElementById('videoUrl').addEventListener('change', (e) => {
-    const url = e.target.value;
-    if (url) {
-      document.getElementById('videoUrlDisplay').textContent = url;
-      document.getElementById('videoInfo').classList.remove('hidden');
-    }
-  });
 
   // ============ ANALYZE VIDEO ============
   document.getElementById('analyzeBtn').addEventListener('click', async () => {
@@ -478,52 +635,22 @@
         <p><strong>Audio:</strong> ${data.analysis.keyElements?.audio || 'N/A'}</p>
       `;
 
-      document.getElementById('generatedPrompt').textContent = data.analysis.adaptedPrompt;
+      const promptText = data.analysis.adaptedPrompt;
+      document.getElementById('generatedPrompt').textContent = promptText;
+
+      // Mostrar settings en resultados
+      document.getElementById('resultResolution').textContent = document.getElementById('resolution').value;
+      document.getElementById('resultRatio').textContent = document.getElementById('aspectRatio').value;
+      document.getElementById('resultDuration').textContent = document.getElementById('duration').value + ' segundos';
 
       document.getElementById('analysisResult').classList.remove('hidden');
-      document.getElementById('generateBtn').disabled = false;
+      document.getElementById('resultsSection').classList.remove('hidden');
 
-      showSuccess('✅ Análisis completado. Listo para generar video.');
+      showSuccess('✅ Análisis completado. Prompt generado - cópialo a HappyHorse o veoaifree');
     } catch (error) {
       showError('Error analizando video: ' + error.message);
     } finally {
       document.getElementById('analysisLoading').classList.add('hidden');
-    }
-  });
-
-  // ============ GENERATE VIDEO ============
-  document.getElementById('generateBtn').addEventListener('click', async () => {
-    if (!currentAnalysis) {
-      showError('Por favor analiza el video primero');
-      return;
-    }
-
-    document.getElementById('generationLoading').classList.remove('hidden');
-    document.getElementById('generateBtn').disabled = true;
-
-    try {
-      const response = await fetch(`${API_BASE}/generate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          prompt: currentAnalysis.adaptedPrompt,
-          productImage: document.getElementById('productImage').value,
-          aspectRatio: document.getElementById('aspectRatio').value,
-          resolution: document.getElementById('resolution').value,
-          duration: parseInt(document.getElementById('duration').value)
-        })
-      });
-
-      if (!response.ok) throw new Error('Error en generación');
-
-      const data = await response.json();
-      document.getElementById('resultsSection').classList.remove('hidden');
-      showSuccess('🎉 Video listo. Usa HappyHorse 1.0 o veoaifree.com para generar.');
-    } catch (error) {
-      showError('Error generando video: ' + error.message);
-    } finally {
-      document.getElementById('generationLoading').classList.add('hidden');
-      document.getElementById('generateBtn').disabled = false;
     }
   });
 
@@ -538,7 +665,8 @@
     document.getElementById('analysisResult').classList.add('hidden');
     document.getElementById('resultsSection').classList.add('hidden');
     document.getElementById('categoryWarning').classList.add('hidden');
-    document.getElementById('generateBtn').disabled = true;
+    imagePreview.style.display = 'none';
+    productImageBase64 = null;
     currentAnalysis = null;
   });
 
