@@ -1,0 +1,206 @@
+{
+  "categories": {
+    "ropa_moda": {
+      "label": "Ropa & Moda",
+      "status": "permitido",
+      "subcategories": [
+        "Ropa para hombre",
+        "Ropa para mujer",
+        "Ropa unisex",
+        "Ropa deportiva",
+        "Pijamas & ropa de dormir",
+        "Ropa casual",
+        "Ropa formal",
+        "Accesorios de ropa"
+      ]
+    },
+    "zapatos": {
+      "label": "Zapatos & Calzado",
+      "status": "permitido",
+      "subcategories": [
+        "Zapatos para hombre",
+        "Zapatos para mujer",
+        "Zapatos infantil",
+        "Zapatos deportivos",
+        "Zapatos casual",
+        "Botas & botines",
+        "Sandalias & chanclas",
+        "Tenis & deportivos"
+      ]
+    },
+    "accesorios_moda": {
+      "label": "Accesorios de Moda",
+      "status": "permitido",
+      "subcategories": [
+        "Bolsas & mochilas",
+        "Billeteras & carteras",
+        "Cinturones",
+        "Sombreros & gorras",
+        "Bufandas & pañuelos",
+        "Lentes de sol",
+        "Accesorios de cabello",
+        "Guantes & mitones"
+      ]
+    },
+    "electronica": {
+      "label": "Electrónica & Gadgets",
+      "status": "permitido",
+      "subcategories": [
+        "Accesorios de celular",
+        "Auriculares & audífonos",
+        "Cargadores & cables",
+        "Power banks",
+        "Smartwatch & pulseras",
+        "Accesorios de computadora",
+        "Luces LED & iluminación",
+        "Adaptadores & convertidores",
+        "Protectores de pantalla"
+      ]
+    },
+    "electrodomesticos": {
+      "label": "Electrodomésticos",
+      "status": "permitido",
+      "subcategories": [
+        "Pequeños electrodomésticos",
+        "Ventiladores",
+        "Humidificadores",
+        "Purificadores de aire",
+        "Calentadores",
+        "Licuadoras & procesadores",
+        "Tostadores",
+        "Cafetera"
+      ]
+    },
+    "hogar_decoracion": {
+      "label": "Hogar & Decoración",
+      "status": "permitido",
+      "subcategories": [
+        "Decoración de pared",
+        "Cuadros & láminas",
+        "Almohadas & cojines",
+        "Mantas & colchas",
+        "Cortinas & persianas",
+        "Alfombras & tapetes",
+        "Espejos",
+        "Plantas artificiales",
+        "Decoración de escritorio",
+        "Organizadores"
+      ]
+    },
+    "muebles": {
+      "label": "Muebles",
+      "status": "permitido",
+      "subcategories": [
+        "Sofás & sillas",
+        "Mesas & escritorios",
+        "Camas & cabeceras",
+        "Estantes & armarios",
+        "Bancos & reposapiés",
+        "Perchas & soportes",
+        "Muebles de jardín"
+      ]
+    },
+    "cocina": {
+      "label": "Cocina & Comedor",
+      "status": "permitido",
+      "subcategories": [
+        "Utensilios de cocina",
+        "Ollas & sartenes",
+        "Cuchillos & tablas",
+        "Vajilla & platos",
+        "Vasos & tazas",
+        "Cubiertos",
+        "Almacenamiento de alimentos",
+        "Organizadores de cocina",
+        "Mantelería",
+        "Servilletas & trapos"
+      ]
+    },
+    "libros": {
+      "label": "Libros & Educación",
+      "status": "permitido",
+      "subcategories": [
+        "Novelas",
+        "Libros de desarrollo personal",
+        "Libros técnicos",
+        "Libros infantiles",
+        "Comics & novelas gráficas",
+        "Artículos escolares",
+        "Útiles de escritorio",
+        "Cuadernos & libretas",
+        "Bolígrafos & lápices"
+      ]
+    },
+    "belleza_cuidado": {
+      "label": "🔒 Belleza & Cuidado Personal (RESTRINGIDO)",
+      "status": "restringido",
+      "restriction_note": "Requiere registro COFEPRIS + GMV ≥ $1M USD en 2024",
+      "subcategories": [
+        "Skincare (cremas, sueros, mascarillas)",
+        "Maquillaje",
+        "Cuidado del cabello",
+        "Fragancias & perfumes",
+        "Herramientas de belleza",
+        "Cuidado corporal",
+        "Higiene personal",
+        "Protección solar"
+      ]
+    },
+    "autopartes": {
+      "label": "🔒 Autopartes (RESTRINGIDO)",
+      "status": "restringido",
+      "restriction_note": "Requiere GMV ≥ $100K USD en 2024",
+      "subcategories": [
+        "Accesorios de coche",
+        "Repuestos",
+        "Limpieza automotriz",
+        "Herramientas automotrices"
+      ]
+    },
+    "suplementos": {
+      "label": "⚠️ Suplementos & Dispositivos Médicos (RESTRINGIDO)",
+      "status": "restringido",
+      "restriction_note": "Requiere autorización previa de TikTok",
+      "subcategories": [
+        "Suplementos vitamínicos",
+        "Proteínas & nutrición deportiva",
+        "Probióticos",
+        "Dispositivos de salud"
+      ]
+    },
+    "otros": {
+      "label": "Otros Productos Permitidos",
+      "status": "permitido",
+      "subcategories": [
+        "Herramientas & tornillería",
+        "Artículos de oficina",
+        "Bolsas de tela",
+        "Artículos de viaje",
+        "Artesanías",
+        "Equipos deportivos",
+        "Accesorios deportivos"
+      ]
+    }
+  },
+  "prohibited_categories": {
+    "label": "🚫 Categorías PROHIBIDAS (NO permitidas)",
+    "note": "No es posible vender estos productos en TikTok Shop México",
+    "items": [
+      "Artículos para bebés y juguetes",
+      "Alimentos y bebidas",
+      "Productos para mascotas",
+      "Joyería y metales preciosos",
+      "Suministros médicos generales",
+      "Productos para adultos (juguetes sexuales, ropa erótica)",
+      "Cigarrillos electrónicos & vaping",
+      "Teléfonos de segunda mano",
+      "Alcohol y tabaco",
+      "Armas y artículos con cuchillas",
+      "Partes del cuerpo humano / fluidos",
+      "Artículos gubernamentales / militares",
+      "Fauna y flora protegidas / plantas vivas",
+      "Diamantes en bruto",
+      "Productos discriminatorios u ofensivos"
+    ]
+  }
+}

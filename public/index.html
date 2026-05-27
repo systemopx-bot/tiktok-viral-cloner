@@ -48,6 +48,28 @@
       border-color: #667eea;
       background-color: #667eea;
     }
+
+    .category-option {
+      padding: 8px 12px;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+
+    .category-option:hover {
+      background-color: #f0f0f0;
+    }
+
+    .category-restricted {
+      color: #f59e0b;
+      background-color: #fef3c7;
+    }
+
+    .category-prohibited {
+      color: #dc2626;
+      background-color: #fee2e2;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
   </style>
 </head>
 <body class="bg-gray-50">
@@ -58,7 +80,7 @@
     <div class="flex items-center justify-between">
       <div>
         <h1 class="text-4xl font-bold">🎬 TikTok Viral Cloner</h1>
-        <p class="text-blue-100 mt-2">Clona videos virales y adapta a tus productos con IA</p>
+        <p class="text-blue-100 mt-2">Analiza videos virales y genera versiones con tus productos - 100% GRATIS</p>
       </div>
       <div class="text-right">
         <div id="statusIndicator" class="flex items-center gap-2 text-sm">
@@ -134,22 +156,45 @@
         <!-- Product Info -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Descripción del Producto</label>
-          <textarea id="productInfo" placeholder="Ej: Crema facial hidratante B-Unik, 50ml, para piel sensible..." 
+          <textarea id="productInfo" placeholder="Ej: Crema facial hidratante, 50ml, para piel sensible..." 
             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" 
             rows="3"></textarea>
         </div>
 
         <!-- Category Select -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Categoría</label>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Categoría (TikTok Shop México)</label>
           <select id="productCategory" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500">
-            <option value="skincare">Skincare (B-Unik)</option>
-            <option value="home">Hogar & Decoración (PastoPlus/PisoPlus)</option>
-            <option value="fashion">Moda & Accesorios</option>
-            <option value="electronics">Electrónica</option>
-            <option value="other">Otro</option>
+            <option value="">Selecciona una categoría...</option>
+          </select>
+          <div id="categoryWarning" class="hidden mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded text-xs text-yellow-800"></div>
+        </div>
+
+        <!-- Subcategory Select -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Subcategoría</label>
+          <select id="productSubcategory" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" disabled>
+            <option value="">Selecciona subcategoría...</option>
           </select>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Categorías Info -->
+  <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-8 text-sm text-blue-800">
+    <div class="flex gap-4">
+      <div class="flex gap-2 items-start">
+        <i class="fas fa-check-circle text-green-600 mt-0.5"></i>
+        <span><strong>Permitidas:</strong> Venta directa sin restricciones</span>
+      </div>
+      <div class="flex gap-2 items-start">
+        <i class="fas fa-lock text-yellow-600 mt-0.5"></i>
+        <span><strong>Restringidas:</strong> Requieren requisitos adicionales (COFEPRIS, GMV mínimo, etc.)</span>
+      </div>
+      <div class="flex gap-2 items-start">
+        <i class="fas fa-ban text-red-600 mt-0.5"></i>
+        <span><strong>Prohibidas:</strong> NO permitidas en TikTok Shop México</span>
       </div>
     </div>
   </div>
@@ -227,7 +272,7 @@
 
     <div id="generationLoading" class="hidden text-center py-8">
       <i class="fas fa-spinner loading text-3xl mb-3"></i>
-      <p>Generando tu video con Seedance 2.0...</p>
+      <p>Generando tu video con veoaifree / HappyHorse...</p>
       <p class="text-sm text-purple-100 mt-2">Esto puede tomar 1-3 minutos</p>
     </div>
   </div>
@@ -240,17 +285,13 @@
     </div>
 
     <div class="space-y-4">
-      <div class="bg-gray-900 rounded-lg overflow-hidden">
-        <video id="generatedVideo" controls class="w-full" style="aspect-ratio: 9/16; object-fit: contain;"></video>
-      </div>
-
-      <div class="flex gap-3">
-        <button id="downloadBtn" class="flex-1 btn-gradient text-white px-6 py-3 rounded-lg font-bold flex items-center justify-center gap-2">
-          <i class="fas fa-download"></i> Descargar Video
-        </button>
-        <button id="publishBtn" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-bold flex items-center justify-center gap-2">
-          <i class="fas fa-share"></i> Publicar en TikTok
-        </button>
+      <div id="generationInstructions" class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+        <h3 class="font-bold text-blue-800 mb-2">📝 Próximos pasos:</h3>
+        <p class="text-sm text-blue-700">Tu video está listo para descargar y publicar en TikTok Shop. Usa HappyHorse 1.0 o veoaifree.com para generar:</p>
+        <ul class="text-sm text-blue-700 mt-2 space-y-1">
+          <li>✅ HappyHorse 1.0 (app desktop) - MEJOR CALIDAD, gratis hasta junio 2026</li>
+          <li>✅ veoaifree.com - Seedance 2.0, 100% gratis, sin login</li>
+        </ul>
       </div>
 
       <button id="resetBtn" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-2 rounded-lg font-medium">
@@ -282,8 +323,8 @@
 <!-- Footer -->
 <footer class="bg-gray-800 text-white py-8 mt-16">
   <div class="max-w-7xl mx-auto px-4 text-center">
-    <p class="mb-2">🎬 TikTok Viral Cloner | Powered by Seedance 2.0 & Groq</p>
-    <p class="text-gray-400 text-sm">Crea videos virales para TikTok Shop sin costo de tokens</p>
+    <p class="mb-2">🎬 TikTok Viral Cloner | 100% GRATIS con Groq + HappyHorse/veoaifree</p>
+    <p class="text-gray-400 text-sm">Genera videos virales para TikTok Shop sin costos - Categorías Oficiales TikTok Shop México</p>
   </div>
 </footer>
 
@@ -291,6 +332,73 @@
   // ============ CONFIG ============
   const API_BASE = window.location.origin + '/api';
   let currentAnalysis = null;
+  let categoriesData = null;
+
+  // ============ LOAD CATEGORIES ============
+  async function loadCategories() {
+    try {
+      const response = await fetch('/categories.json');
+      categoriesData = await response.json();
+      populateCategoryDropdown();
+    } catch (error) {
+      console.error('Error loading categories:', error);
+    }
+  }
+
+  function populateCategoryDropdown() {
+    const select = document.getElementById('productCategory');
+    select.innerHTML = '<option value="">Selecciona una categoría...</option>';
+    
+    Object.entries(categoriesData.categories).forEach(([key, cat]) => {
+      const option = document.createElement('option');
+      option.value = key;
+      
+      let label = cat.label;
+      if (cat.status === 'restringido') {
+        label += ' 🔒 (Restringido)';
+      } else if (cat.status === 'prohibido') {
+        label += ' 🚫 (Prohibido)';
+      }
+      
+      option.textContent = label;
+      option.dataset.status = cat.status;
+      option.dataset.restriction = cat.restriction_note || '';
+      select.appendChild(option);
+    });
+  }
+
+  document.getElementById('productCategory').addEventListener('change', (e) => {
+    const key = e.target.value;
+    const subcategorySelect = document.getElementById('productSubcategory');
+    const categoryWarning = document.getElementById('categoryWarning');
+    
+    if (!key) {
+      subcategorySelect.disabled = true;
+      subcategorySelect.innerHTML = '<option value="">Selecciona subcategoría...</option>';
+      categoryWarning.classList.add('hidden');
+      return;
+    }
+
+    const category = categoriesData.categories[key];
+    
+    // Mostrar advertencias si aplica
+    if (category.status === 'restringido') {
+      categoryWarning.innerHTML = `<i class="fas fa-lock"></i> <strong>Categoría Restringida:</strong> ${category.restriction_note}`;
+      categoryWarning.classList.remove('hidden');
+    } else {
+      categoryWarning.classList.add('hidden');
+    }
+
+    subcategorySelect.disabled = false;
+    subcategorySelect.innerHTML = '<option value="">Selecciona subcategoría...</option>';
+    
+    category.subcategories.forEach(sub => {
+      const option = document.createElement('option');
+      option.value = sub;
+      option.textContent = sub;
+      subcategorySelect.appendChild(option);
+    });
+  });
 
   // ============ UTILITIES ============
   function showError(message) {
@@ -318,6 +426,8 @@
   document.getElementById('analyzeBtn').addEventListener('click', async () => {
     const videoUrl = document.getElementById('videoUrl').value;
     const productInfo = document.getElementById('productInfo').value;
+    const category = document.getElementById('productCategory').value;
+    const subcategory = document.getElementById('productSubcategory').value;
 
     if (!videoUrl) {
       showError('Por favor ingresa la URL del video viral');
@@ -329,14 +439,26 @@
       return;
     }
 
+    if (!category) {
+      showError('Por favor selecciona una categoría');
+      return;
+    }
+
+    if (!subcategory) {
+      showError('Por favor selecciona una subcategoría');
+      return;
+    }
+
     document.getElementById('analysisLoading').classList.remove('hidden');
     document.getElementById('analysisResult').classList.add('hidden');
 
     try {
+      const fullProductInfo = `${productInfo} (Categoría: ${categoriesData.categories[category].label} / Subcategoría: ${subcategory})`;
+      
       const response = await fetch(`${API_BASE}/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ videoUrl, productInfo })
+        body: JSON.stringify({ videoUrl, productInfo: fullProductInfo })
       });
 
       if (!response.ok) throw new Error('Error en análisis');
@@ -344,7 +466,6 @@
       const data = await response.json();
       currentAnalysis = data.analysis;
 
-      // Mostrar resultados
       document.getElementById('analysisStructure').innerHTML = `
         <p><strong>Hook:</strong> ${data.analysis.viralStructure?.hook || 'N/A'}</p>
         <p><strong>Duración:</strong> ${data.analysis.viralStructure?.duration || 'N/A'}</p>
@@ -362,7 +483,7 @@
       document.getElementById('analysisResult').classList.remove('hidden');
       document.getElementById('generateBtn').disabled = false;
 
-      showSuccess('✅ Análisis completado. Lista para generar video.');
+      showSuccess('✅ Análisis completado. Listo para generar video.');
     } catch (error) {
       showError('Error analizando video: ' + error.message);
     } finally {
@@ -377,11 +498,6 @@
       return;
     }
 
-    const resolution = document.getElementById('resolution').value;
-    const aspectRatio = document.getElementById('aspectRatio').value;
-    const duration = parseInt(document.getElementById('duration').value);
-    const productImage = document.getElementById('productImage').value;
-
     document.getElementById('generationLoading').classList.remove('hidden');
     document.getElementById('generateBtn').disabled = true;
 
@@ -391,22 +507,18 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           prompt: currentAnalysis.adaptedPrompt,
-          productImage,
-          aspectRatio,
-          resolution,
-          duration
+          productImage: document.getElementById('productImage').value,
+          aspectRatio: document.getElementById('aspectRatio').value,
+          resolution: document.getElementById('resolution').value,
+          duration: parseInt(document.getElementById('duration').value)
         })
       });
 
       if (!response.ok) throw new Error('Error en generación');
 
       const data = await response.json();
-
-      // Mostrar video generado
-      document.getElementById('generatedVideo').src = data.video.videoUrl;
       document.getElementById('resultsSection').classList.remove('hidden');
-
-      showSuccess('🎉 Video generado exitosamente con Seedance 2.0');
+      showSuccess('🎉 Video listo. Usa HappyHorse 1.0 o veoaifree.com para generar.');
     } catch (error) {
       showError('Error generando video: ' + error.message);
     } finally {
@@ -415,44 +527,33 @@
     }
   });
 
-  // ============ DOWNLOAD VIDEO ============
-  document.getElementById('downloadBtn').addEventListener('click', async () => {
-    const videoSrc = document.getElementById('generatedVideo').src;
-    if (!videoSrc) return;
-
-    const a = document.createElement('a');
-    a.href = videoSrc;
-    a.download = `viral-video-${Date.now()}.mp4`;
-    a.click();
-  });
-
   // ============ RESET ============
   document.getElementById('resetBtn').addEventListener('click', () => {
     document.getElementById('videoUrl').value = '';
     document.getElementById('productInfo').value = '';
     document.getElementById('productImage').value = '';
+    document.getElementById('productCategory').value = '';
+    document.getElementById('productSubcategory').value = '';
     document.getElementById('videoInfo').classList.add('hidden');
     document.getElementById('analysisResult').classList.add('hidden');
     document.getElementById('resultsSection').classList.add('hidden');
+    document.getElementById('categoryWarning').classList.add('hidden');
     document.getElementById('generateBtn').disabled = true;
     currentAnalysis = null;
   });
 
-  // ============ STATUS CHECK ============
+  // ============ INIT ============
+  loadCategories();
+  checkStatus();
+
   async function checkStatus() {
     try {
       const response = await fetch(`${API_BASE}/health`);
       const data = await response.json();
-      
-      if (data.groqApiKey === '✗' || data.falApiKey === '✗') {
-        showError('⚠️ Faltan variables de entorno. Mira .env.example');
-      }
     } catch (error) {
       console.error('Status check failed:', error);
     }
   }
-
-  checkStatus();
 </script>
 
 </body>
